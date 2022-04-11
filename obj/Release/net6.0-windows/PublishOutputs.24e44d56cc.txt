@@ -1,0 +1,5 @@
+C:\Users\KU186SW\RiderProjects\Published\SnakeGame.exe
+C:\Users\KU186SW\RiderProjects\Published\SnakeGame.dll
+C:\Users\KU186SW\RiderProjects\Published\SnakeGame.deps.json
+C:\Users\KU186SW\RiderProjects\Published\SnakeGame.runtimeconfig.json
+C:\Users\KU186SW\RiderProjects\Published\SnakeGame.pdb

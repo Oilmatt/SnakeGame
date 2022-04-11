@@ -1,0 +1,217 @@
+﻿<Window x:Class="SnakeGame.SnakeGameWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+        mc:Ignorable="d"
+        x:Name="window"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        Title="Snake - Score 0"
+        SizeToContent="WidthAndHeight"
+        Cursor="Cross"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        ContentRendered="Window_ContentRendered"
+        KeyUp="Window_KeyUp"
+        MouseDown="Window_MouseDown">
+
+    <Window.Resources>
+        <CollectionViewSource
+            Source="{Binding ElementName=window, Path=HighscoreList}"
+            x:Key="HighScoreListViewSource">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription Direction="Descending" PropertyName="Score" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+    </Window.Resources>
+
+    <DockPanel Background="Black">
+
+        <Grid DockPanel.Dock="Top" Name="pnlTitleBar">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontFamily" Value="Consolas" />
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="FontSize" Value="24" />
+                    <Setter Property="FontWeight" Value="Bold" />
+                </Style>
+            </Grid.Resources>
+
+            <WrapPanel Margin="10,0,0,0">
+                <TextBlock>Score: </TextBlock>
+                <TextBlock Name="tbStatusScore">0</TextBlock>
+            </WrapPanel>
+
+            <WrapPanel Grid.Column="1">
+                <TextBlock>Speed: </TextBlock>
+                <TextBlock Name="tbStatusSpeed">0</TextBlock>
+            </WrapPanel>
+
+            <Button Grid.Column="2" DockPanel.Dock="Right" Background="Transparent" Foreground="White"
+                    FontWeight="Bold" FontSize="20" BorderThickness="0" Name="btnClose" Click="BtnClose_Click"
+                    Padding="10,0">
+                X
+            </Button>
+
+        </Grid>
+
+        <Border BorderBrush="Black" BorderThickness="3">
+
+            <Border.Resources>
+                <Style x:Key="txtBlock_Title" TargetType="TextBlock">
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="Margin" Value="0,20,0,0" />
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="FontSize" Value="32" />
+                    <Setter Property="FontWeight" Value="Bold" />
+                    <Setter Property="TextWrapping" Value="Wrap" />
+                    <Setter Property="TextAlignment" Value="Center" />
+                </Style>
+                <Style x:Key="txtBlock_Body" TargetType="TextBlock">
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="Margin" Value="20" />
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="FontSize" Value="18" />
+                    <Setter Property="TextWrapping" Value="Wrap" />
+                    <Setter Property="TextAlignment" Value="Center" />
+                </Style>
+                <Style x:Key="txtBlock_Instruction" TargetType="TextBlock">
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="Margin" Value="20,0" />
+                    <Setter Property="Foreground" Value="MediumSlateBlue" />
+                    <Setter Property="FontSize" Value="18" />
+                    <Setter Property="FontWeight" Value="Bold" />
+                    <Setter Property="TextWrapping" Value="Wrap" />
+                    <Setter Property="TextAlignment" Value="Center" />
+                </Style>
+                <Style x:Key="border_PopUpMessage" TargetType="Border">
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="BorderBrush" Value="White" />
+                    <Setter Property="BorderThickness" Value="2" />
+                    <Setter Property="Width" Value="300" />
+                    <Setter Property="Height" Value="300" />
+                    <Setter Property="Canvas.Left" Value="50" />
+                    <Setter Property="Canvas.Top" Value="50" />
+                    <Setter Property="Panel.ZIndex" Value="1" />
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </Style>
+            </Border.Resources>
+
+            <Canvas Name="GameArea" ClipToBounds="True" Width="400" Height="400" Background="DarkGreen">
+
+                <Border Name="bdrWelcomeMessage" Style="{StaticResource border_PopUpMessage}">
+                    <StackPanel Orientation="Vertical" Background="Black">
+
+                        <TextBlock Style="{StaticResource txtBlock_Title}">
+                            Snake
+                        </TextBlock>
+
+                        <TextBlock Style="{StaticResource txtBlock_Body}">
+                            Use the arrow keys to control the snake. Make it eat the red apples, but be sure not to eat your own tail!
+                        </TextBlock>
+
+                        <TextBlock Style="{StaticResource txtBlock_Instruction}">
+                            Press SPACE to start!
+                        </TextBlock>
+
+                    </StackPanel>
+                </Border>
+
+                <Border Name="bdrNewHighScore" Style="{StaticResource border_PopUpMessage}">
+                    <StackPanel Orientation="Vertical" Background="Black">
+
+                        <TextBlock Style="{StaticResource txtBlock_Title}">
+                            New Highscore!
+                        </TextBlock>
+
+                        <TextBlock Style="{StaticResource txtBlock_Body}">
+                            Congratulations - you got a high score! Enter your name below...
+                        </TextBlock>
+
+                        <TextBox Name="txtPlayerName"
+                                 FontSize="24"
+                                 FontWeight="Bold"
+                                 MaxLength="8"
+                                 Margin="20,0"
+                                 Padding="0, 3"
+                                 TextAlignment="Center"
+                                 HorizontalContentAlignment="Center"
+                                 BorderThickness="0"
+                                 Background="White">
+                        </TextBox>
+
+                        <Button Name="btnAddToHighscoreList" FontSize="16" HorizontalAlignment="Center"
+                                Click="BtnAddToHighscoreList_Click" Padding="5,3" Margin="0, 20">
+                            Add to highscore list
+                        </Button>
+
+                    </StackPanel>
+                </Border>
+
+                <Border Name="bdrHighscoreList" Style="{StaticResource border_PopUpMessage}">
+                    <StackPanel Orientation="Vertical" Background="Black">
+
+                        <TextBlock Style="{StaticResource txtBlock_Title}">
+                            High Score List
+                        </TextBlock>
+
+                        <ItemsControl Margin="20,10,20,10" BorderBrush="White" BorderThickness="0,1" ItemsSource="{Binding Source={StaticResource HighScoreListViewSource}}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel Margin="10,2,10,2">
+                                        <TextBlock Text="{Binding PlayerName}" DockPanel.Dock="Left" FontSize="18" Foreground="White"></TextBlock>
+                                        <TextBlock Text="{Binding Score}" DockPanel.Dock="Right" FontSize="18" Foreground="White" HorizontalAlignment="Right"></TextBlock>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <TextBlock Style="{StaticResource txtBlock_Instruction}" Foreground="White">
+                            Press SPACE to start a new game!
+                        </TextBlock>
+
+                    </StackPanel>
+                </Border>
+
+                <Border Name="bdrGameOver" Style="{StaticResource border_PopUpMessage}">
+                    <StackPanel Orientation="Vertical" Background="Black">
+
+                        <TextBlock Style="{StaticResource txtBlock_Title}">
+                            GAME OVER
+                        </TextBlock>
+
+                        <TextBlock Style="{StaticResource txtBlock_Body}" Margin="20,20,20,5">
+                            Your score:
+                        </TextBlock>
+
+                        <TextBlock Name="tbFinalScore" Style="{StaticResource txtBlock_Instruction}" FontSize="40">
+                            0
+                        </TextBlock>
+
+                        <Button Name="btnViewHighscoreList" FontSize="16" HorizontalAlignment="Center"
+                                Click="BtnViewHighscoreList_Click" Padding="5,3" Margin="0, 15,0,20">
+                            View highscore list
+                        </Button>
+
+                        <TextBlock Style="{StaticResource txtBlock_Instruction}" Foreground="White">
+                            Or, press SPACE to start a new game!
+                        </TextBlock>
+
+                    </StackPanel>
+                </Border>
+
+            </Canvas>
+
+        </Border>
+
+    </DockPanel>
+
+</Window>
